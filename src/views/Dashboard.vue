@@ -3,7 +3,7 @@
     <h1 class="subheading grey--text ma-4">Dashboard</h1>
 
     <v-container class="my-3">
-      content
+      // TODO
     </v-container>
 
   </div>
