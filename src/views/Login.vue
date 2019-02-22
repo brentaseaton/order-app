@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <v-layout row class="justify-center">
-      <v-flex xs10 md5>
+      <v-flex xs10 md6>
         <v-card class="ma-4">
           <v-card-title class="justify-center grey--text">
             <h2>Login</h2>
@@ -9,7 +9,7 @@
           <v-card-text>
             <v-form class="px-3" ref="form">
               <v-text-field label="Email" v-model="email" prepend-icon="email" ></v-text-field>
-              <v-text-field label="Password" v-model="password" prepend-icon="lock" ></v-text-field>
+              <v-text-field type="password" label="Password" v-model="password" prepend-icon="lock" ></v-text-field>
               <v-spacer></v-spacer>
               <v-btn flat class="success mx-0 mt-3" @click="login">Login</v-btn>
             </v-form>

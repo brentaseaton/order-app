@@ -3,7 +3,7 @@
     <h1 class="subheading grey--text ma-4">Recipes</h1>
 
     <v-flex xs12>
-      <v-btn router to="/add-recipe" color="warning" class="ml-4">Add Recipe</v-btn>
+      <v-btn router to="/add-recipe" color="warning" class="ml-4">Add Recipe<v-icon right>add</v-icon></v-btn>
       <v-layout row xs12 wrap>
         <v-flex xs12 md4 v-for="recipe in recipes" :key="recipe.slug">
           <v-card class="ma-4" color="error white--text">
