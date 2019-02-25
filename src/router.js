@@ -5,6 +5,7 @@ import Login from './views/Login'
 import Recipes from './views/Recipes'
 import AddRecipe from './views/AddRecipe'
 import EditRecipe from './views/EditRecipe'
+import Orders from './views/Orders'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/edit-recipe/:recipe_slug',
       name: 'EditRecipe',
       component: EditRecipe
+    },
+    {
+      path: '/orders',
+      name: 'Orders',
+      component: Orders
     }
   ]
 })

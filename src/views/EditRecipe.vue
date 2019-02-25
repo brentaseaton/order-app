@@ -9,6 +9,7 @@
           <v-card-text>
             <v-form class="px-3" ref="form">
               <v-text-field v-model="recipe.title" label="Recipe Title:"></v-text-field>
+              <v-text-field v-model="recipe.price" label="Price:"></v-text-field>
               <v-text-field v-for="(ing, index) in recipe.ingredients" :key="index" v-model="recipe.ingredients[index]" label="Ingredient" append-icon="delete" @click:append="deleteIng(ing)"></v-text-field>
               <v-text-field v-model="another" label="Add an ingredient:" @keydown.tab.prevent="addIng" append-icon="add" @click:append="addIng"></v-text-field>
               <div class="field center-align">
@@ -48,7 +49,8 @@ export default {
         db.collection('recipes').doc(this.recipe.slug).update({
           title: this.recipe.title,
           ingredients: this.recipe.ingredients,
-          slug: this.recipe.slug
+          slug: this.recipe.slug,
+          price: this.recipe.price
         }).then(() => {
           this.$router.push({ name: 'recipes' })
         }).catch(err => {

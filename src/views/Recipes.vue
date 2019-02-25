@@ -7,7 +7,11 @@
       <v-layout row xs12 wrap>
         <v-flex xs12 md4 v-for="recipe in recipes" :key="recipe.slug">
           <v-card class="ma-4" color="error white--text">
-            <v-card-title><h2>{{ recipe.title }}</h2></v-card-title>
+            <v-card-title>
+              <h2>{{ recipe.title }}</h2>
+              <v-spacer></v-spacer>
+              ${{ recipe.price }}
+            </v-card-title>
             <v-list>
               <v-chip outline color="error" v-for="(ing, index) in recipe.ingredients" :key="index" class="my-2">{{ ing }}</v-chip>
             </v-list>

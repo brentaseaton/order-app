@@ -73,6 +73,7 @@ export default {
       companyName: 'Vera Pizza',
       links: [
         { icon: 'dashboard', text: 'Dashboard', route: '/' },
+        { icon: 'list', text: 'Orders', route: '/orders'},
         { icon: 'folder', text: 'Recipes', route: '/recipes' }
       ],
       loggedIn: null,

@@ -9,6 +9,7 @@
           <v-card-text>
             <v-form class="px-3" ref="form">
               <v-text-field v-model="title" label="Recipe Title:"></v-text-field>
+              <v-text-field v-model="price" label="Price:"></v-text-field>
               <v-text-field v-for="(ing, index) in ingredients" :key="index" v-model="ingredients[index]" label="Ingredient" append-icon="delete" @click:append="deleteIng(ing)"></v-text-field>
               <v-text-field v-model="another" label="Add an ingredient:" @keydown.tab.prevent="addIng" append-icon="add" @click:append="addIng"></v-text-field>
               <div class="field center-align">
@@ -35,7 +36,8 @@ export default {
       another: null,
       ingredients: [],
       feedback: null,
-      slug: null
+      slug: null,
+      price: 0.00
     }
   },
   methods: {
@@ -55,7 +57,9 @@ export default {
             ref.set({
               title: this.title,
               ingredients: this.ingredients,
-              slug: this.slug
+              slug: this.slug,
+              quantity: 0,
+              price: this.price
             }).then(() => {
               this.$router.push({ name: 'recipes' })
             }).catch(err => {
