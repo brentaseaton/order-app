@@ -8,7 +8,8 @@
     <Popup @orderAdded="snackbar = true"/>
     <v-container fluid class="my-3">
       <v-layout row wrap>
-        <v-flex xs12 md5>
+        <ReadyOrders />
+        <!-- <v-flex xs12 md5>
           <h2 class="header-2 grey--text ma-2">Ready for Pickup</h2>
           <v-card class="my-4 mx-3" v-for="order in orders" :key="order.id">
             <v-layout class="pa-3" row wrap v-if="order.status == 'READY'">
@@ -16,9 +17,6 @@
                 <div class="caption grey--text">Order #</div>
                 <div>{{ order.orderNumber }}</div>
               </v-flex>
-              <!-- <v-flex xs3>
-                <div><v-btn color="error" @click="cancelOrder(order.id)">CANCEL</v-btn></div>
-              </v-flex> -->
               <v-flex xs3>
                 <div class="caption grey--text">Time (Minutes)</div>
                 <div>3</div>
@@ -42,7 +40,7 @@
               </v-flex>
             </v-layout>
           </v-card>
-        </v-flex>
+        </v-flex> -->
         <v-flex xs12 md5>
           <h2 class="header-2 grey--text ma-2">Active Orders</h2>
           <v-card class="my-4 mx-3" v-for="order in orders" :key="order.id">
@@ -84,10 +82,12 @@
 import firebase from 'firebase'
 import db from '@/firebase/init'
 import Popup from '@/components/NewOrderPopup'
+import ReadyOrders from '@/components/ReadyOrders'
 
 export default {
   components: {
-    Popup
+    Popup,
+    ReadyOrders
   },
   data() {
     return {
@@ -195,9 +195,8 @@ export default {
     
     ref.onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
+        let doc = change.doc
         if(change.type == 'added') {
-          let doc = change.doc
-
           this.orders.push({
             id: doc.id,
             dishes: doc.data().dishes,
@@ -206,7 +205,20 @@ export default {
             notes: doc.data().notes
           })
         } else if (change.type == 'modified') {
+          this.orders.forEach(order => {
+            if(order.orderNumber == doc.data().orderNumber) {
+              /* this.orders.splice(order.index, 1)
 
+              this.orders.push({
+                id: doc.id,
+                dishes: doc.data().dishes,
+                status: doc.data().status,
+                orderNumber: doc.data().orderNumber,
+                notes: doc.data().notes
+              })
+              console.log(doc.id) */
+            }
+          })
         } else if (change.type == 'removed') {
           
         }
