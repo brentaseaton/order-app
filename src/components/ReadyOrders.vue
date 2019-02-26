@@ -1,5 +1,5 @@
 <template>
-  <v-flex xs12 md5>
+  <v-flex xs12 sm6>
     <h2 class="header-2 grey--text ma-2">Ready Orders</h2>
     <v-card class="my-4 mx-3" v-for="(order, index) in readyOrders" :key="'B' + index">
       <v-layout class="pa-3" row wrap v-if="order.status == 'READY'">
@@ -64,19 +64,44 @@ export default {
     }
   },
   created() {
-    let ref = db.collection('orders')
+    let ref = db.collection('orders').orderBy('orderNumber')
     
     ref.onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         let doc = change.doc
-
-        this.readyOrders.push({
-          id: doc.id,
-          dishes: doc.data().dishes,
-          status: doc.data().status,
-          orderNumber: doc.data().orderNumber,
-          notes: doc.data().notes
-        })
+        if(change.type == 'added') {
+          this.readyOrders.push({
+            id: doc.id,
+            dishes: doc.data().dishes,
+            status: doc.data().status,
+            orderNumber: doc.data().orderNumber,
+            notes: doc.data().notes
+          })
+        } else if (change.type == 'modified') {
+          this.readyOrders.forEach(order => {
+            if(order.id == doc.id) {
+              this.readyOrders = this.readyOrders.filter(o => {
+                return o.id != order.id
+              })
+            }
+          })
+          
+          this.readyOrders.push({
+            id: doc.id,
+            dishes: doc.data().dishes,
+            status: doc.data().status,
+            orderNumber: doc.data().orderNumber,
+            notes: doc.data().notes
+          })
+        } else if (change.type == 'removed') {
+          this.readyOrders.forEach(order => {
+            if(order.id == doc.id) {
+              this.readyOrders = this.readyOrders.filter(o => {
+                return o.id != order.id
+              })
+            }
+          })
+        }
       })
     }) 
   }

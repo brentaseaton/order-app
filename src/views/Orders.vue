@@ -41,9 +41,9 @@
             </v-layout>
           </v-card>
         </v-flex> -->
-        <v-flex xs12 md5>
+        <v-flex xs12 sm6>
           <h2 class="header-2 grey--text ma-2">Active Orders</h2>
-          <v-card class="my-4 mx-3" v-for="order in orders" :key="order.id">
+          <v-card class="my-4 mx-3" v-for="(order, index) in orders" :key="order.id + index">
             <v-layout class="pa-3" row wrap v-if="order.status == 'ACTIVE'">
               <v-flex xs4 class="mb-2">
                 <div class="caption grey--text">Order #</div>
@@ -206,21 +206,28 @@ export default {
           })
         } else if (change.type == 'modified') {
           this.orders.forEach(order => {
-            if(order.orderNumber == doc.data().orderNumber) {
-              /* this.orders.splice(order.index, 1)
-
-              this.orders.push({
-                id: doc.id,
-                dishes: doc.data().dishes,
-                status: doc.data().status,
-                orderNumber: doc.data().orderNumber,
-                notes: doc.data().notes
+            if(order.id == doc.id) {
+              this.orders = this.orders.filter(o => {
+                return o.id != order.id
               })
-              console.log(doc.id) */
             }
           })
-        } else if (change.type == 'removed') {
           
+          this.orders.push({
+            id: doc.id,
+            dishes: doc.data().dishes,
+            status: doc.data().status,
+            orderNumber: doc.data().orderNumber,
+            notes: doc.data().notes
+          })
+        } else if (change.type == 'removed') {
+          this.orders.forEach(order => {
+            if(order.id == doc.id) {
+              this.orders = this.orders.filter(o => {
+                return o.id != order.id
+              })
+            }
+          })
         }
       })
     })

@@ -4,7 +4,8 @@
 
     <v-container fluid class="my-3">
       <v-layout row wrap>
-        <v-flex xs12 md5>
+        <ReadyOrders />
+        <v-flex xs12 sm6>
           <h2 class="header-2 grey--text ma-2">Active Orders</h2>
           <v-card class="my-4 mx-3" v-for="(order, index) in orders" :key="'A' + index">
             <v-layout class="pa-3" row wrap v-if="order.status == 'ACTIVE'">
@@ -39,7 +40,6 @@
             </v-layout>
           </v-card>
         </v-flex>
-        <ReadyOrders />
       </v-layout>
     </v-container>
 
