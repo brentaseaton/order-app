@@ -1,15 +1,15 @@
 <template>
   <div class="stats">
-    <h1 class="subheading grey--text mx-4 my-3">Statistics</h1>
+    <h1 class="subheading grey--text mx-4 my-2">Statistics</h1>
 
     <v-layout row>
-      <v-flex xs2 class="mx-4 my-3">
+      <v-flex xs6 md2 class="mx-4 my-2">
         <v-select :items="items" label="Select Graph" solo v-on:change="setChartDishes()"></v-select>
       </v-flex>
     </v-layout>
     
     <v-layout row wrap>
-      <v-flex xs10 class="mx-4 my-3">
+      <v-flex xs12 md10 class="mx-4 my-2">
         <GChart type="LineChart" :data="chartData" :options="chartOptions" v-if="chartData.length" />
       </v-flex>
     </v-layout>
