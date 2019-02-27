@@ -1,15 +1,15 @@
 <template>
   <div class="stats">
-    <h1 class="subheading grey--text ma-4">Statistics</h1>
+    <h1 class="subheading grey--text mx-4 my-3">Statistics</h1>
 
     <v-layout row>
-      <v-flex xs2 class="ma-4">
+      <v-flex xs2 class="mx-4 my-3">
         <v-select :items="items" label="Select Graph" solo v-on:change="setChartDishes()"></v-select>
       </v-flex>
     </v-layout>
     
     <v-layout row wrap>
-      <v-flex xs10 class="ma-4">
+      <v-flex xs10 class="mx-4 my-3">
         <GChart type="LineChart" :data="chartData" :options="chartOptions" v-if="chartData.length" />
       </v-flex>
     </v-layout>
@@ -31,11 +31,13 @@ export default {
       orders: [],
       dishes: [],
       items: ['Dish by Day'],
-      dishQuantities: [],
+      orderQuantities: [],
       dishTitles: [],
       chartData: [],
       chartOptions: {
-          height: 500
+          title: '',
+          subtitle: 'Test subtitle',
+          height: 400
       },
       days: [
         { name: 'Sun', id: 0},
@@ -50,35 +52,50 @@ export default {
   },
   methods: {
     setChartDishes() {
-      if(!this.chartData.length) {
-        this.chartData.push(['Day'])
+      this.chartData =[]
+      this.chartData.push(['Day'])
 
-        this.days.forEach(day => {
-          this.chartData.push([day.name])
-        })
+      this.dishes.forEach(dish => {
+        this.chartData[0].push(dish.title)
+      })
 
-        this.dishes.forEach(dish => {
-          let qty = 0
-          let index = 1
+      this.days.forEach(day => {
+        this.chartData.push([day.name])
+      })
 
-          this.chartData[0].push(dish.title)
-          
-          this.days.forEach(day => {
+      this.orderQuantities = []
+
+      this.days.forEach(day => {
+          this.dishes.forEach(dish => {
+            this.orderQuantities.push({
+              name: dish.title,
+              quantity: 0,
+              day: day.name
+            })
+            
             this.orders.forEach(order => {
-              if(order.day == day.id) {
-                order.dishes.forEach(d => {
-                  if(dish.title == d.title) {
-                    qty++
+              if(day.id == order.day) {
+                order.dishes.forEach(orderDish => {
+                  if(dish.title == orderDish.title) {
+                    this.orderQuantities.forEach(oq => {
+                      if(oq.name == orderDish.title && oq.day == day.name) {
+                        oq.quantity += orderDish.quantity
+                      }
+                    })
                   }
                 })
-              }
-            })
-            this.chartData[day.id + 1].push(qty)
-            qty = 0
-          })         
-        })  
-        console.log(this.chartData)      
-      }
+              }   
+            })           
+          })
+
+        this.orderQuantities.forEach(oq => {
+          if(oq.day == day.name) {
+            this.chartData[day.id + 1].push(oq.quantity)
+          }
+        })
+      })
+      console.log(this.orderQuantities)
+      console.log(this.chartData) 
     }
   },
   created() {
