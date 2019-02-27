@@ -4,7 +4,7 @@
       Enter Order
     </v-btn>
     <v-layout row style="background-color: white">
-      <v-flex xs12 lg4 style="max-height: 800px; overflow: auto">
+      <v-flex xs12 lg6 style="max-height: 800px; overflow: auto">
         <h2 class="header-2 grey--text ma-2">Enter Order</h2>
         <v-flex xs12 v-for="recipe in recipes" :key="recipe.slug">
           <v-card class="my-4 mx-3" color="error white--text">
@@ -84,6 +84,8 @@ export default {
       }
     },
     createOrder(r, n) {
+      let TodayDate = new Date()
+
       if(r.length > 0) {
         this.loading = true
         this.feedback = null
@@ -91,7 +93,9 @@ export default {
           dishes: r,
           status: 'ACTIVE',
           orderNumber: this.orderNum,
-          notes: n
+          notes: n,
+          timestamp: Date.now(),
+          day: TodayDate.getDay()
         }).then(() => {
           this.increaseOrderNumber()
           this.orderRecipes = []

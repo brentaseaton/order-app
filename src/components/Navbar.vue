@@ -74,7 +74,8 @@ export default {
       links: [
         { icon: 'dashboard', text: 'Dashboard', route: '/' },
         { icon: 'list', text: 'Orders', route: '/orders'},
-        { icon: 'folder', text: 'Recipes', route: '/recipes' }
+        { icon: 'folder', text: 'Recipes', route: '/recipes' },
+        { icon: 'insert_chart', text: 'Stats', route: '/stats'}
       ],
       loggedIn: null,
       email: null

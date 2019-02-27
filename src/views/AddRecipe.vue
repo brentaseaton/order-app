@@ -10,6 +10,7 @@
             <v-form class="px-3" ref="form">
               <v-text-field v-model="title" label="Recipe Title:"></v-text-field>
               <v-text-field v-model="price" label="Price:"></v-text-field>
+              <v-text-field v-model="cost" label="Cost:"></v-text-field>
               <v-text-field v-for="(ing, index) in ingredients" :key="index" v-model="ingredients[index]" label="Ingredient" append-icon="delete" @click:append="deleteIng(ing)"></v-text-field>
               <v-text-field v-model="another" label="Add an ingredient:" @keydown.tab.prevent="addIng" append-icon="add" @click:append="addIng"></v-text-field>
               <div class="field center-align">
@@ -37,7 +38,8 @@ export default {
       ingredients: [],
       feedback: null,
       slug: null,
-      price: 0.00
+      price: 0.00,
+      cost: 0.00
     }
   },
   methods: {
@@ -59,7 +61,8 @@ export default {
               ingredients: this.ingredients,
               slug: this.slug,
               quantity: 0,
-              price: this.price
+              price: this.price,
+              cost: this.cost
             }).then(() => {
               this.$router.push({ name: 'recipes' })
             }).catch(err => {

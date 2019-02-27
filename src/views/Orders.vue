@@ -9,39 +9,7 @@
     <v-container fluid class="my-3">
       <v-layout row wrap>
         <ReadyOrders />
-        <!-- <v-flex xs12 md5>
-          <h2 class="header-2 grey--text ma-2">Ready for Pickup</h2>
-          <v-card class="my-4 mx-3" v-for="order in orders" :key="order.id">
-            <v-layout class="pa-3" row wrap v-if="order.status == 'READY'">
-              <v-flex xs2 class="mb-2">
-                <div class="caption grey--text">Order #</div>
-                <div>{{ order.orderNumber }}</div>
-              </v-flex>
-              <v-flex xs3>
-                <div class="caption grey--text">Time (Minutes)</div>
-                <div>3</div>
-              </v-flex>
-              <v-flex xs2>
-                <div class="caption grey--text">Status</div>
-                <div>{{ order.status}}</div>
-              </v-flex>
-              <v-flex xs5>
-                <v-btn class="right" color="success" @click="orderPickedUp(order)" :loading="loading">PICKED UP</v-btn>
-              </v-flex>
-              <v-flex xs12 class="mb-2" v-if="order.notes">
-                <div class="caption grey--text">Notes</div>
-                <div>{{ order.notes }}</div>
-              </v-flex>
-              <v-flex xs12>
-                <div class="caption grey--text">Dishes</div>
-                <v-chip dark color="warning" v-for="(dish, index) in order.dishes" :key="index">
-                  {{ dish.title }} x{{ dish.quantity }}
-                </v-chip>
-              </v-flex>
-            </v-layout>
-          </v-card>
-        </v-flex> -->
-        <v-flex xs12 sm6>
+        <v-flex xs12 sm6 md5>
           <h2 class="header-2 grey--text ma-2">Active Orders</h2>
           <v-card class="my-4 mx-3" v-for="(order, index) in orders" :key="order.id + index">
             <v-layout class="pa-3" row wrap v-if="order.status == 'ACTIVE'">
@@ -49,12 +17,9 @@
                 <div class="caption grey--text">Order #</div>
                 <div>{{ order.orderNumber }}</div>
               </v-flex>
-              <!-- <v-flex xs3>
-                <div><v-btn color="error" @click="cancelOrder(order.id)">CANCEL</v-btn></div>
-              </v-flex> -->
               <v-flex xs4>
-                <div class="caption grey--text">Time (Minutes)</div>
-                <div>3</div>
+                <div class="caption grey--text">Time Submitted</div>
+                <div>{{ order.timestamp }}</div>
               </v-flex>
               <v-flex xs4>
                 <div class="caption grey--text">Status</div>
@@ -83,6 +48,7 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 import Popup from '@/components/NewOrderPopup'
 import ReadyOrders from '@/components/ReadyOrders'
+import moment from 'moment'
 
 export default {
   components: {
@@ -117,30 +83,6 @@ export default {
       if(!this.orderRecipes.includes(r)) {
         this.orderRecipes.push(r)
       }
-    },
-    createOrder(r) {
-      if(r.length > 0) {
-        this.feedback = null
-        db.collection('orders').add({
-          dishes: r,
-          status: 'ACTIVE',
-          orderNumber: this.orderNum
-        }).then(() => {
-          this.increaseOrderNumber()
-          this.orderRecipes = []
-        }).catch(err => {
-          console.log(err.message)
-        })
-      } else {
-        this.feedback = 'You need to enter a dish before submitting an order'
-      }      
-    },
-    cancelOrder(id) {
-      db.collection('orders').doc(id).delete().then(() => {
-        this.orders = this.orders.filter(order => {
-          return order.id != id
-        })
-      })
     },
     increaseOrderNumber() {
       this.orderNum++
@@ -202,7 +144,8 @@ export default {
             dishes: doc.data().dishes,
             status: doc.data().status,
             orderNumber: doc.data().orderNumber,
-            notes: doc.data().notes
+            notes: doc.data().notes,
+            timestamp: moment(doc.data().timestamp).fromNow()
           })
         } else if (change.type == 'modified') {
           this.orders.forEach(order => {
@@ -218,7 +161,8 @@ export default {
             dishes: doc.data().dishes,
             status: doc.data().status,
             orderNumber: doc.data().orderNumber,
-            notes: doc.data().notes
+            notes: doc.data().notes,
+            timestamp: moment(doc.data().timestamp).fromNow()
           })
         } else if (change.type == 'removed') {
           this.orders.forEach(order => {

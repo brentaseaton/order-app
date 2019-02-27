@@ -5,7 +5,7 @@
     <v-container fluid class="my-3">
       <v-layout row wrap>
         <ReadyOrders />
-        <v-flex xs12 sm6>
+        <v-flex xs12 sm6 md5>
           <h2 class="header-2 grey--text ma-2">Active Orders</h2>
           <v-card class="my-4 mx-3" v-for="(order, index) in orders" :key="'A' + index">
             <v-layout class="pa-3" row wrap v-if="order.status == 'ACTIVE'">
@@ -13,14 +13,11 @@
                 <div class="caption grey--text">Order #</div>
                 <div>{{ order.orderNumber }}</div>
               </v-flex>
-              <!-- <v-flex xs3>
-                <div><v-btn color="error" @click="cancelOrder(order.id)">CANCEL</v-btn></div>
-              </v-flex> -->
-              <v-flex xs3>
-                <div class="caption grey--text">Time (Minutes)</div>
-                <div>3</div>
+              <v-flex xs4>
+                <div class="caption grey--text">Time Submitted</div>
+                <div>{{ order.timestamp }}</div>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs1>
                 <div class="caption grey--text">Status</div>
                 <div>{{ order.status}}</div>
               </v-flex>
@@ -50,6 +47,7 @@
 import firebase from 'firebase'
 import db from '@/firebase/init'
 import ReadyOrders from '@/components/ReadyOrders'
+import moment from 'moment'
 
 export default {
   name: 'Dashboard',
@@ -95,7 +93,8 @@ export default {
           dishes: doc.data().dishes,
           status: doc.data().status,
           orderNumber: doc.data().orderNumber,
-          notes: doc.data().notes
+          notes: doc.data().notes,
+          timestamp: moment(doc.data().timestamp).fromNow()
         })
       })
     }) 
