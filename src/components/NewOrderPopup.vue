@@ -1,20 +1,20 @@
 <template>
   <v-dialog max-width="1000px" v-model="dialog">
-    <v-btn slot="activator" class="success">
+    <v-btn slot="activator" dark :color="`${company.secondaryColor}`" class="mx-4">
       Enter Order
     </v-btn>
     <v-layout row style="background-color: white">
       <v-flex xs12 lg6 style="max-height: 800px; overflow: auto">
-        <h2 class="header-2 grey--text ma-2">Enter Order</h2>
+        <h2 :class="`header-2 ${company.mainColor}--text ma-2`">Enter Order</h2>
         <v-flex xs12 v-for="recipe in recipes" :key="recipe.slug">
-          <v-card class="my-4 mx-3" color="error white--text">
+          <v-card class="my-4 mx-3" :color="`${company.mainColor} white--text`">
             <v-card-title>
               <h2>{{ recipe.title }}</h2>
               <v-spacer></v-spacer>
               ${{ recipe.price }}
             </v-card-title>
             <v-list>
-              <v-chip outline :color="textColor" v-for="(ing, index) in recipe.ingredients" :key="index" class="my-2">{{ ing }}</v-chip>
+              <v-chip outline :color="`${company.secondaryColor}`" v-for="(ing, index) in recipe.ingredients" :key="index" class="my-2">{{ ing }}</v-chip>
             </v-list>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -30,16 +30,16 @@
         </v-flex>
       </v-flex>
       <v-flex xs12 lg4>
-        <h2 class="title grey--text ma-2">Order Summary</h2>        
+        <h2 :class="`title ${company.mainColor}--text ma-2`">Order Summary</h2>        
         <p class="red--text center">{{ feedback }}</p>
-        <v-btn color="success" @click="createOrder(orderRecipes, notes)" :loading="loading">Submit Order</v-btn>
+        <v-btn dark :color="`${company.secondaryColor}`" @click="createOrder(orderRecipes, notes)" :loading="loading">Submit Order</v-btn>
         <v-list style="background-color: transparent">
           <v-list-tile v-for="(r, index) in orderRecipes" :key="index">
             <v-list-tile-title class="subheading grey--text">{{ r.title }} <span class="mx-4">x{{ r.quantity }}</span></v-list-tile-title>
           </v-list-tile>
         </v-list>
-        <h2 class="subheading blue--text ml-3 mb-3">Total: ${{ total }}</h2>
-        <v-textarea solo v-model="notes" label="Notes:" class="ma-3"></v-textarea>
+        <h2 :class="`subheading ${company.mainColor}--text ml-3 mb-3`">Total: $<b>{{ total }}</b></h2>
+        <v-textarea :color="`${company.mainColor}`" solo v-model="notes" label="Notes:" class="ma-3"></v-textarea>
       </v-flex>
     </v-layout>
   </v-dialog>
@@ -63,7 +63,8 @@ export default {
       dialog: false,
       loading: false,
       notes: null,
-      total: 0
+      total: 0,
+      company: null
     }
   },
   methods: {
@@ -162,11 +163,12 @@ export default {
     .then(snapshot => {
       snapshot.forEach(doc => {
         let c = doc.data()
-        if(c.name == 'Vera Pizza') {
-          this.company = c
-          this.company.id = doc.id
-          this.orderNum = this.company.orderNumber
-        }
+        this.company = c
+        this.company.id = doc.id
+        this.orderNum = this.company.orderNumber
+        this.company.mainColor = doc.data().mainColor
+        this.company.name = doc.data().name
+        this.company.secondaryColor = doc.data().secondaryColor
       })
     })
 

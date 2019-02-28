@@ -4,18 +4,18 @@
       <v-flex xs10 md5>
         <v-card class="ma-4">
           <v-card-title class="justify-center grey--text">
-            <h2>Add New Recipe</h2>
+            <h2 :style="`color: ${company.mainColor}`">Add New Recipe</h2>
           </v-card-title>
           <v-card-text>
             <v-form class="px-3" ref="form">
-              <v-text-field v-model="title" label="Recipe Title:"></v-text-field>
-              <v-text-field v-model="price" label="Price:"></v-text-field>
-              <v-text-field v-model="cost" label="Cost:"></v-text-field>
-              <v-text-field v-for="(ing, index) in ingredients" :key="index" v-model="ingredients[index]" label="Ingredient" append-icon="delete" @click:append="deleteIng(ing)"></v-text-field>
-              <v-text-field v-model="another" label="Add an ingredient:" @keydown.tab.prevent="addIng" append-icon="add" @click:append="addIng"></v-text-field>
+              <v-text-field v-model="title" label="Recipe Title:" :color="`${company.mainColor}`"></v-text-field>
+              <v-text-field v-model="price" label="Price:" :color="`${company.mainColor}`"></v-text-field>
+              <v-text-field v-model="cost" label="Cost:" :color="`${company.mainColor}`"></v-text-field>
+              <v-text-field v-for="(ing, index) in ingredients" :key="index" v-model="ingredients[index]" label="Ingredient" append-icon="delete" @click:append="deleteIng(ing)" :color="`${company.mainColor}`"></v-text-field>
+              <v-text-field v-model="another" label="Add an ingredient:" @keydown.tab.prevent="addIng" append-icon="add" @click:append="addIng" :color="`${company.mainColor}`"></v-text-field>
               <div class="field center-align">
                 <p v-if="feedback" class="red--text">{{ feedback }}</p>
-                <v-btn color="success" @click="addRecipe">Add Recipe</v-btn>
+                <v-btn dark :color="`${company.mainColor}`" @click="addRecipe">Add Recipe</v-btn>
               </div>
             </v-form>
           </v-card-text>
@@ -39,7 +39,8 @@ export default {
       feedback: null,
       slug: null,
       price: 0.00,
-      cost: 0.00
+      cost: 0.00,
+      company: null
     }
   },
   methods: {
@@ -88,6 +89,19 @@ export default {
         return ingredient != ing
       })
     }
+  },
+  created() {
+    db.collection('companies').get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        let c = doc.data()
+        this.company = c
+        this.company.id = doc.id
+        this.orderNum = this.company.orderNumber
+        this.company.mainColor = doc.data().mainColor
+        this.company.name = doc.data().name
+      })
+    })
   }
 }
 </script>

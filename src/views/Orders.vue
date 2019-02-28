@@ -1,21 +1,21 @@
 <template>
   <div class="dashboard">
-    <v-snackbar v-model="snackbar" :timeout="4000" top color="success">
+    <v-snackbar v-model="snackbar" :timeout="4000" top :color="`${company.mainColor}`">
       <span>Order added successfully</span>
       <v-btn flat color="white" @click="snackbar = false">Close</v-btn>
     </v-snackbar>
-    <h1 class="subheading grey--text ma-4">Orders</h1>
+    <h1 class="subheading grey--text mx-4 my-3">Orders</h1>
     <Popup @orderAdded="snackbar = true"/>
     <v-container fluid class="my-3">
       <v-layout row wrap>
         <ReadyOrders />
         <v-flex xs12 sm6 md5>
-          <h2 class="header-2 grey--text ma-2">Active Orders</h2>
+          <h2 :class="`header-2 ${company.mainColor}--text ma-2`">Active Orders</h2>
           <v-card class="my-4 mx-3" v-for="(order, index) in orders" :key="order.id + index">
             <v-layout class="pa-3" row wrap v-if="order.status == 'ACTIVE'">
               <v-flex xs4 class="mb-2">
                 <div class="caption grey--text">Order #</div>
-                <div>{{ order.orderNumber }}</div>
+                <div><b>{{ order.orderNumber }}</b></div>
               </v-flex>
               <v-flex xs4>
                 <div class="caption grey--text">Time Submitted</div>
@@ -31,7 +31,7 @@
               </v-flex>
               <v-flex xs12>
                 <div class="caption grey--text">Dishes</div>
-                <v-chip dark color="warning" v-for="(dish, index) in order.dishes" :key="index">
+                <v-chip dark :color="`${company.mainColor}`" v-for="(dish, index) in order.dishes" :key="index">
                   {{ dish.title }} x{{ dish.quantity }}
                 </v-chip>
               </v-flex>
@@ -125,11 +125,12 @@ export default {
     .then(snapshot => {
       snapshot.forEach(doc => {
         let c = doc.data()
-        if(c.name == 'Vera Pizza') {
-          this.company = c
-          this.company.id = doc.id
-          this.orderNum = this.company.orderNumber
-        }
+        this.company = c
+        this.company.id = doc.id
+        this.orderNum = this.company.orderNumber
+        this.company.mainColor = doc.data().mainColor
+        this.company.name = doc.data().name
+        this.company.secondaryColor = doc.data().secondaryColor
       })
     })
 

@@ -1,6 +1,6 @@
 <template>
   <v-flex xs12 sm6 md5>
-    <h2 class="header-2 grey--text ma-2">Ready Orders</h2>
+    <h2 :class="`header-2 ${company.mainColor}--text ma-2`">Ready Orders</h2>
     <v-card class="my-4 mx-3" v-for="(order, index) in readyOrders" :key="'B' + index">
       <v-layout class="pa-3" row wrap v-if="order.status == 'READY'">
         <v-flex xs2 class="mb-2">
@@ -19,7 +19,7 @@
           <div>{{ order.status}}</div>
         </v-flex>
         <v-flex xs5>
-          <v-btn class="right" color="success" @click="orderPickedUp(order)" :loading="loading">PICKED UP</v-btn>
+          <v-btn class="right" dark :color="`${company.secondaryColor}`" @click="orderPickedUp(order)" :loading="loading">PICKED UP</v-btn>
         </v-flex>
         <v-flex xs12 class="mb-2" v-if="order.notes">
           <div class="caption grey--text">Notes</div>
@@ -27,7 +27,7 @@
         </v-flex>
         <v-flex xs12>
           <div class="caption grey--text">Dishes</div>
-          <v-chip dark color="warning" v-for="(dish, index) in order.dishes" :key="'C' + index">
+          <v-chip dark :color="`${company.mainColor}`" v-for="(dish, index) in order.dishes" :key="'C' + index">
             {{ dish.title }} x{{ dish.quantity }}
           </v-chip>
         </v-flex>
@@ -46,7 +46,8 @@ export default {
   data() {
     return {
       readyOrders: [],
-      loading: false
+      loading: false,
+      company: null
     }
   },
   methods: {
@@ -107,6 +108,19 @@ export default {
         }
       })
     }) 
+
+    db.collection('companies').get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        let c = doc.data()
+        this.company = c
+        this.company.id = doc.id
+        this.orderNum = this.company.orderNumber
+        this.company.mainColor = doc.data().mainColor
+        this.company.name = doc.data().name
+        this.company.secondaryColor = doc.data().secondaryColor
+      })
+    })
   }
 }
 </script>

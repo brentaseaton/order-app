@@ -29,14 +29,14 @@
       <v-toolbar-title class="grey--text caption" v-if="loggedIn">User: {{ email }}</v-toolbar-title>
     </v-toolbar>
 
-    <v-navigation-drawer v-model="drawer" app class="error">
+    <v-navigation-drawer v-model="drawer" app :style="`background-color: ${company.mainColor}`">
       <v-layout column align-center>
         <v-flex class="mt-5">
           <v-avatar size="100" class="pr-1">
             <img src="/avatar-2.png">
           </v-avatar>
           <p class="white--text subheading mt-2">
-            {{ companyName }}
+            {{ company.name }}
           </p>
         </v-flex>
         <!-- <v-flex class="mt-4 mb-3">
@@ -64,6 +64,7 @@
 
 <script>
 import firebase from 'firebase' 
+import db from '@/firebase/init'
 
 export default {
   name: 'Navbar',
@@ -75,10 +76,12 @@ export default {
         { icon: 'dashboard', text: 'Dashboard', route: '/' },
         { icon: 'list', text: 'Orders', route: '/orders'},
         { icon: 'folder', text: 'Recipes', route: '/recipes' },
-        { icon: 'insert_chart', text: 'Stats', route: '/stats'}
+        { icon: 'insert_chart', text: 'Stats', route: '/stats'},
+        { icon: 'settings', text: 'Settings', route: '/settings'}
       ],
       loggedIn: null,
-      email: null
+      email: null,
+      company: null
     }
   },
   methods: {
@@ -100,7 +103,31 @@ export default {
       } else {
         this.loggedIn = false
       }
-    })    
+    }) 
+
+    db.collection('companies').get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        let c = doc.data()
+        this.company = c
+        this.company.id = doc.id
+        this.orderNum = this.company.orderNumber
+        this.company.mainColor = doc.data().mainColor
+        this.company.name = doc.data().name
+      })
+    })
+
+    db.collection('companies').onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        let doc = change.doc
+        if(change.type == 'modified') {
+          this.company.id = doc.id
+          this.orderNum = this.company.orderNumber
+          this.company.mainColor = doc.data().mainColor
+          this.company.name = doc.data().name
+        }
+      })
+    })
   }
 }
 </script>

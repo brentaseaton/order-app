@@ -7,6 +7,7 @@ import AddRecipe from './views/AddRecipe'
 import EditRecipe from './views/EditRecipe'
 import Orders from './views/Orders'
 import Stats from './views/Stats'
+import Settings from './views/Settings'
 
 Vue.use(Router)
 
@@ -48,6 +49,11 @@ export default new Router({
       path: '/stats',
       name: 'Stats',
       component: Stats
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: Settings
     }
   ]
 })

@@ -4,14 +4,29 @@
 
     <v-layout row>
       <v-flex xs6 md2 class="mx-4 my-2">
-        <v-select :items="items" label="Select Graph" solo v-on:change="setChartDishes()"></v-select>
+        <v-select :items="items" label="Select Data" solo v-on:change="setChartDishes()"></v-select>
       </v-flex>
     </v-layout>
     
-    <v-layout row wrap>
+    <v-layout row wrap v-if="chartData.length">
       <v-flex xs12 md10 class="mx-4 my-2">
-        <GChart type="LineChart" :data="chartData" :options="chartOptions" v-if="chartData.length" />
+        <GChart type="LineChart" :data="chartData" :options="chartOptions" />
       </v-flex>
+
+      <v-flex xs12 md10 class="mx-4 my-2">
+        <v-data-table :headers="headers" :items="tableItems" class="elevation-1">
+          <template slot="items" slot-scope="props">
+            <td>{{ props.item.name }}</td>
+            <td>{{ props.item.Sun }}</td>
+            <td>{{ props.item.Mon }}</td>
+            <td>{{ props.item.Tues }}</td>
+            <td>{{ props.item.Weds }}</td>
+            <td>{{ props.item.Thurs }}</td>
+            <td>{{ props.item.Fri }}</td>
+            <td>{{ props.item.Sat }}</td>
+          </template>
+        </v-data-table>
+      </v-flex>        
     </v-layout>
   </div>
 </template>
@@ -47,16 +62,39 @@ export default {
         { name: 'Thurs', id: 4},
         { name: 'Fri', id: 5 },
         { name: 'Sat', id: 6 }
-      ]
+      ],
+      headers: [
+        { text: 'Dish', align: 'left', sortable: false, value: 'name'},
+        { text: 'Sun (%)', value: 'Sun', align: 'left', sortable: false},
+        { text: 'Mon (%)', value: 'Mon', align: 'left', sortable: false},
+        { text: 'Tues (%)', value: 'Tues', align: 'left', sortable: false},
+        { text: 'Weds (%)', value: 'Weds', align: 'left', sortable: false},
+        { text: 'Thurs (%)', value: 'Thurs', align: 'left', sortable: false},
+        { text: 'Fri (%)', value: 'Fri', align: 'left', sortable: false},
+        { text: 'Sat (%)', value: 'Sat', align: 'left', sortable: false}
+      ],
+      tableItems: []
     }
   },
   methods: {
     setChartDishes() {
-      this.chartData =[]
+      this.chartData = []
+      this.tableItems = []
       this.chartData.push(['Day'])
 
       this.dishes.forEach(dish => {
         this.chartData[0].push(dish.title)
+
+        /* this.tableItems.push({
+          name: dish.title,
+          Sun: null,
+          Mon: null,
+          Tues: null,
+          Weds: null,
+          Thurs: null,
+          Fri: null,
+          Sat: null
+        }) */
       })
 
       this.days.forEach(day => {
@@ -94,8 +132,78 @@ export default {
           }
         })
       })
-      console.log(this.orderQuantities)
-      console.log(this.chartData) 
+      
+      let SunTotal = 0
+      let MonTotal = 0
+      let TuesTotal = 0
+      let WedsTotal = 0
+      let ThursTotal = 0
+      let FriTotal = 0
+      let SatTotal = 0
+
+      this.dishes.forEach(dish => {
+
+        this.orderQuantities.forEach(oq => {
+          if(dish.title == oq.name) {
+            if(oq.day == 'Sun') {
+              SunTotal += oq.quantity
+            } else if(oq.day == 'Mon') {
+              MonTotal += oq.quantity
+            } else if(oq.day == 'Tues') {
+              TuesTotal += oq.quantity
+            } else if(oq.day == 'Weds') {
+              WedsTotal += oq.quantity
+            } else if(oq.day == 'Thurs') {
+              ThursTotal += oq.quantity
+            } else if(oq.day == 'Fri') {
+              FriTotal += oq.quantity
+            } else if(oq.day == 'Sat') {
+              SatTotal += oq.quantity
+            }
+          }
+        })
+      })
+
+      this.dishes.forEach(dish => {
+        let Sunday = 0
+        let Monday = 0
+        let Tuesday = 0
+        let Wednesday = 0
+        let Thursday = 0
+        let Friday = 0
+        let Saturday = 0
+
+        this.orderQuantities.forEach(oq => {
+          if(dish.title == oq.name) {
+            if(oq.day == 'Sun' && SunTotal != 0) {
+              Sunday = oq.quantity / SunTotal * 100
+            } else if(oq.day == 'Mon' && MonTotal != 0) {
+              Monday = oq.quantity / MonTotal * 100
+            } else if(oq.day == 'Tues' && TuesTotal != 0) {
+              Tuesday = oq.quantity / TuesTotal * 100
+            } else if(oq.day == 'Weds' && WedsTotal != 0) {
+              Wednesday = oq.quantity / WedsTotal * 100
+            } else if(oq.day == 'Thurs' && ThursTotal != 0) {
+              Thursday = oq.quantity / ThursTotal * 100
+            } else if(oq.day == 'Fri' && FriTotal != 0) {
+              Friday = oq.quantity / FriTotal * 100
+            } else if(oq.day == 'Sat' && SatTotal != 0) {
+              Saturday = oq.quantity / SatTotal * 100
+            }
+          }
+        })
+
+        this.tableItems.push({
+          name: dish.title,
+          Sun: Sunday,
+          Mon: Monday,
+          Tues: Tuesday,
+          Weds: Wednesday,
+          Thurs: Thursday,
+          Fri: Friday,
+          Sat: Saturday
+        })
+      })
     }
   },
   created() {
