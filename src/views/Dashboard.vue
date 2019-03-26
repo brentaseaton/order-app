@@ -1,31 +1,31 @@
 <template>
   <div class="dashboard">
-    <h1 class="subheading grey--text ma-4">Dashboard</h1>
+    <h1 class="subheading grey--text mx-4 my-3">Dashboard</h1>
 
-    <v-container fluid class="my-3">
+    <v-container fluid class="my-2">
       <v-layout row wrap>
         <ReadyOrders />
         <v-flex xs12 sm6 md5>
           <h2 :class="`header-2 ${company.mainColor}--text ma-2`">Active Orders</h2>
           <v-card class="my-4 mx-3" v-for="(order, index) in orders" :key="'A' + index">
             <v-layout class="pa-3" row wrap v-if="order.status == 'ACTIVE'">
-              <v-flex xs2 class="mb-2">
+              <v-flex xs3 class="mb-2">
                 <div class="caption grey--text">Order #</div>
-                <div><b>{{ order.orderNumber }}</b></div>
+                <div class="display-1"><b>{{ order.orderNumber }}</b></div>
               </v-flex>
               <v-flex xs4>
                 <div class="caption grey--text">Time Submitted</div>
                 <div>{{ order.timestamp }}</div>
               </v-flex>
-              <v-flex xs1>
+              <!-- <v-flex xs1>
                 <div class="caption grey--text">Status</div>
                 <div>{{ order.status}}</div>
-              </v-flex>
+              </v-flex> -->
               <v-flex xs5>
                 <v-btn class="right" dark :color="`${company.secondaryColor}`" @click="orderReady(order)" :loading="loading">READY</v-btn>
               </v-flex>
               <v-flex xs12 class="mb-2" v-if="order.notes">
-                <div class="caption grey--text">Notes</div>
+                <div :class="`caption ${company.mainColor}--text`">Notes</div>
                 <div>{{ order.notes }}</div>
               </v-flex>
               <v-flex xs12>
@@ -83,7 +83,7 @@ export default {
       }
     })
     
-    let ref = db.collection('orders')
+    let ref = db.collection('orders').orderBy('orderNumber')
     
     ref.onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {

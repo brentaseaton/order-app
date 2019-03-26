@@ -71,7 +71,8 @@ export default {
         { text: 'Weds (%)', value: 'Weds', align: 'left', sortable: false},
         { text: 'Thurs (%)', value: 'Thurs', align: 'left', sortable: false},
         { text: 'Fri (%)', value: 'Fri', align: 'left', sortable: false},
-        { text: 'Sat (%)', value: 'Sat', align: 'left', sortable: false}
+        { text: 'Sat (%)', value: 'Sat', align: 'left', sortable: false}/* ,
+        { text: 'Total (%)', value: 'Total', align: 'left', sortable: false} */
       ],
       tableItems: []
     }
@@ -195,13 +196,13 @@ export default {
 
         this.tableItems.push({
           name: dish.title,
-          Sun: Sunday,
-          Mon: Monday,
-          Tues: Tuesday,
-          Weds: Wednesday,
-          Thurs: Thursday,
-          Fri: Friday,
-          Sat: Saturday
+          Sun: Math.round(Sunday),
+          Mon: Math.round(Monday),
+          Tues: Math.round(Tuesday),
+          Weds: Math.round(Wednesday),
+          Thurs: Math.round(Thursday),
+          Fri: Math.round(Friday),
+          Sat: Math.round(Saturday)
         })
       })
     }

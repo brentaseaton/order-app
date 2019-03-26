@@ -15,18 +15,18 @@
             <v-layout class="pa-3" row wrap v-if="order.status == 'ACTIVE'">
               <v-flex xs4 class="mb-2">
                 <div class="caption grey--text">Order #</div>
-                <div><b>{{ order.orderNumber }}</b></div>
+                <div class="display-1"><b>{{ order.orderNumber }}</b></div>
               </v-flex>
               <v-flex xs4>
                 <div class="caption grey--text">Time Submitted</div>
                 <div>{{ order.timestamp }}</div>
-              </v-flex>
+              </v-flex><!-- 
               <v-flex xs4>
                 <div class="caption grey--text">Status</div>
                 <div>{{ order.status}}</div>
-              </v-flex>
+              </v-flex> -->
               <v-flex xs12 class="mb-2" v-if="order.notes">
-                <div class="caption grey--text">Notes</div>
+                <div :class="`caption ${company.mainColor}--text`">Notes</div>
                 <div>{{ order.notes }}</div>
               </v-flex>
               <v-flex xs12>
