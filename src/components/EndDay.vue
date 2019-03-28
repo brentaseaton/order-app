@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="400" v-if="company.dayStarted">
+  <v-dialog v-model="dialog" width="400" v-if="company.dayStarted && company.dayFeature">
     <template v-slot:activator="{ on }">
       <v-btn :color="`${company.mainColor}`" dark v-on="on" class="ml-4" small>
         End Day
@@ -57,7 +57,16 @@ export default {
             console.log(err)
           })
         }
-      })      
+      })     
+      
+      db.collection('companies').doc(this.company.id).update({
+        dayStarted: false
+      }).then(() => {
+        console.log('Day ended.')
+        this.$router.go()
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
