@@ -1,6 +1,6 @@
 <template>
   <div class="edit-recipe" v-if="recipe">
-    <v-layout row class="justify-center">
+    <v-layout row class="justify-center" v-if="company">
       <v-flex xs10 md5>
         <v-card class="ma-4">
           <v-card-title :class="`justify-center ${company.mainColor}--text`">

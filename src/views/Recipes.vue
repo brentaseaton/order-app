@@ -1,5 +1,5 @@
 <template>
-  <div class="recipes">
+  <div class="recipes" v-if="company">
     <h1 class="subheading grey--text ma-4">Recipes</h1>
 
     <v-flex xs12>

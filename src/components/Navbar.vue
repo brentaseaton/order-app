@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav v-if="company">
     <v-toolbar app>
       <v-toolbar-side-icon v-if="loggedIn" class="grey--text" @click="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title class="text-uppercase grey--text" @click="redirect" style="cursor: pointer;">

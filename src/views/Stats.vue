@@ -1,5 +1,5 @@
 <template>
-  <div class="stats">
+  <div class="stats" v-if="company">
     <h1 class="subheading grey--text mx-4 my-2">Statistics</h1>
 
     <v-layout row>

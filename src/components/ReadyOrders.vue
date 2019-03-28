@@ -1,5 +1,5 @@
 <template>
-  <v-flex xs12 sm6 md5>
+  <v-flex xs12 sm6 md5 v-if="company">
     <h2 :class="`header-2 ${company.mainColor}--text ma-2`">Ready Orders</h2>
     <v-card class="my-4 mx-3" v-for="(order, index) in readyOrders" :key="'B' + index">
       <v-layout class="pa-3" row wrap v-if="order.status == 'READY'">

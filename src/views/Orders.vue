@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard" v-if="company">
     <v-snackbar v-model="snackbar" :timeout="4000" top :color="`${company.mainColor}`">
       <span>Order added successfully</span>
       <v-btn flat color="white" @click="snackbar = false">Close</v-btn>

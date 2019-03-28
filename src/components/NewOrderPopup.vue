@@ -1,6 +1,6 @@
 <template>
-  <v-dialog max-width="1000px" v-model="dialog">
-    <v-btn slot="activator" dark :color="`${company.secondaryColor}`" class="mx-4">
+  <v-dialog max-width="1000px" v-model="dialog" v-if="company.dayStarted">
+    <v-btn slot="activator" dark :color="`${company.secondaryColor}`" class="mx-4" small>
       Enter Order
     </v-btn>
     <v-layout row style="background-color: white">

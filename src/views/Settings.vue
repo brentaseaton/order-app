@@ -1,5 +1,5 @@
 <template>
-  <div class="settings">
+  <div class="settings" v-if="company">
     <h1 class="subheading grey--text mx-4 my-2">Settings</h1>
 
     <v-form class="mx-4 my-2" ref="form" v-if="company">
@@ -14,6 +14,11 @@
         </v-flex>
         <v-flex xs12 sm4 md3 class="mx-3">
           <v-text-field :color="`${company.mainColor}`" v-model="company.secondaryColor" label="Secondary Color (hex accepted)"></v-text-field>
+        </v-flex>
+      </v-layout>
+      <v-layout>
+        <v-flex xs12 sm3 md2>
+          <v-checkbox :color="`${company.mainColor}`" v-model="company.dayFeature" label="Start/End Day Feature"></v-checkbox>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
@@ -48,10 +53,16 @@ export default {
       } else {
         this.feedback = null
 
+        if(this.company.dayFeature == false) {
+          this.company.dayStarted = true
+        }
+
         db.collection('companies').doc(this.company.id).update({
           name: this.company.name,
           mainColor: this.company.mainColor,
-          secondaryColor: this.company.secondaryColor
+          secondaryColor: this.company.secondaryColor,
+          dayFeature: this.company.dayFeature,
+          dayStarted: this.company.dayStarted
         }).then(() => {
           this.$router.push({ name: 'Settings' })
         }).catch(err => {

@@ -1,5 +1,5 @@
 <template>
-  <div class="add-recipe">
+  <div class="add-recipe" v-if="company">
     <v-layout row class="justify-center">
       <v-flex xs10 md5>
         <v-card class="ma-4">

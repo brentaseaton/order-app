@@ -1,6 +1,9 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard" v-if="company">
     <h1 class="subheading grey--text mx-4 my-3">Dashboard</h1>
+
+    <StartDay :company="company" />
+    <EndDay :company="company" :orders="orders" />
 
     <v-container fluid class="my-2">
       <v-layout row wrap>
@@ -48,11 +51,15 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 import ReadyOrders from '@/components/ReadyOrders'
 import moment from 'moment'
+import EndDay from '@/components/EndDay'
+import StartDay from '@/components/StartDay'
 
 export default {
   name: 'Dashboard',
   components: {
-    ReadyOrders
+    ReadyOrders,
+    EndDay,
+    StartDay
   },
   data() {
     return {
@@ -88,15 +95,41 @@ export default {
     ref.onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         let doc = change.doc
-
-        this.orders.push({
-          id: doc.id,
-          dishes: doc.data().dishes,
-          status: doc.data().status,
-          orderNumber: doc.data().orderNumber,
-          notes: doc.data().notes,
-          timestamp: moment(doc.data().timestamp).fromNow()
-        })
+        if(change.type == 'added') {
+          this.orders.push({
+            id: doc.id,
+            dishes: doc.data().dishes,
+            status: doc.data().status,
+            orderNumber: doc.data().orderNumber,
+            notes: doc.data().notes,
+            timestamp: moment(doc.data().timestamp).fromNow()
+          })
+        } else if (change.type == 'modified') {
+          this.orders.forEach(order => {
+            if(order.id == doc.id) {
+              this.orders = this.orders.filter(o => {
+                return o.id != order.id
+              })
+            }
+          })
+          
+          this.orders.push({
+            id: doc.id,
+            dishes: doc.data().dishes,
+            status: doc.data().status,
+            orderNumber: doc.data().orderNumber,
+            notes: doc.data().notes,
+            timestamp: moment(doc.data().timestamp).fromNow()
+          })
+        } else if (change.type == 'removed') {
+          this.orders.forEach(order => {
+            if(order.id == doc.id) {
+              this.orders = this.orders.filter(o => {
+                return o.id != order.id
+              })
+            }
+          })
+        }
       })
     }) 
 
