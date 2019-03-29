@@ -7,8 +7,12 @@
     </template>
 
     <v-card>
+      <v-card-title class="headline grey lighten-2" primary-title>
+        Quantities
+      </v-card-title>
+
       <v-form ref="form">
-        <v-text-field v-model="doughs" label="# of Doughs:" :color="`${company.mainColor}`"></v-text-field>
+        <v-text-field v-model="doughs" label="Doughs:" :color="`${company.mainColor}`"></v-text-field>
       </v-form>
 
       <v-divider></v-divider>
@@ -18,7 +22,7 @@
           Cancel
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" flat @click="dialog = false">
+        <v-btn color="primary" flat @click="startDay()">
           Start Day
         </v-btn>
       </v-card-actions>
@@ -27,6 +31,8 @@
 </template>
 
 <script>
+import db from '@/firebase/init'
+
 export default {
   data() {
     return {
@@ -36,6 +42,20 @@ export default {
   },
   props: {
     company: null
+  },
+  methods: {
+    startDay() {
+      this.dialog = false    
+      
+      db.collection('companies').doc(this.company.id).update({
+        dayStarted: true
+      }).then(() => {
+        console.log('Day ended.')
+        this.$router.go()
+      }).catch(err => {
+        console.log(err)
+      })
+    }
   }
 }
 </script>

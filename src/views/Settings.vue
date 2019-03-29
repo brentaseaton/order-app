@@ -1,5 +1,10 @@
 <template>
   <div class="settings" v-if="company">
+    <v-snackbar v-model="snackbar" :timeout="4000" top :color="`${company.mainColor}`">
+      <span>Settings updated successfully</span>
+      <v-btn flat color="white" @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
+
     <h1 class="subheading grey--text mx-4 my-2">Settings</h1>
 
     <v-form class="mx-4 my-2" ref="form" v-if="company">
@@ -16,9 +21,19 @@
           <v-text-field :color="`${company.mainColor}`" v-model="company.secondaryColor" label="Secondary Color (hex accepted)"></v-text-field>
         </v-flex>
       </v-layout>
-      <v-layout>
-        <v-flex xs12 sm3 md2>
+      <v-layout row wrap>
+        <v-flex xs12 sm4 md3>
           <v-checkbox :color="`${company.mainColor}`" v-model="company.dayFeature" label="Start/End Day Feature"></v-checkbox>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap>
+        <v-flex xs12 v-if="company.dayFeature">
+          <v-flex xs3>
+            <v-form ref="form">
+              <v-text-field v-for="(ing, index) in company.ingredients" :key="index" v-model="company.ingredients[index]" label="Ingredient" append-icon="delete" @click:append="deleteIng(ing)" :color="`${company.mainColor}`"></v-text-field>
+              <v-text-field v-model="another" label="Add an ingredient:" @keydown.tab.prevent="addIng" append-icon="add" @click:append="addIng" :color="`${company.mainColor}`"></v-text-field>
+            </v-form>
+          </v-flex>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
@@ -43,7 +58,10 @@ export default {
   data() {
     return {
       company: null,
-      feedback: null
+      feedback: null,
+      snackbar: false,
+      ingredients: [],
+      another: null
     }
   },
   methods: {
@@ -55,6 +73,8 @@ export default {
 
         if(this.company.dayFeature == false) {
           this.company.dayStarted = true
+        } else {
+          this.company.dayStarted = false
         }
 
         db.collection('companies').doc(this.company.id).update({
@@ -64,12 +84,26 @@ export default {
           dayFeature: this.company.dayFeature,
           dayStarted: this.company.dayStarted
         }).then(() => {
-          this.$router.push({ name: 'Settings' })
+          this.snackbar = true
         }).catch(err => {
           this.feedback = err.message
         })
       }
-    }
+    },
+    addIng() {
+      if(this.another) {
+        this.company.ingredients.push(this.another)
+        this.another = null
+        this.feedback = null
+      } else {
+        this.feedback = 'You must enter a value to add an ingredient'
+      }
+    },
+    deleteIng(ing) {
+      this.company.ingredients = this.company.ingredients.filter(ingredient => {
+        return ingredient != ing
+      })
+    } 
   },
   created() {
     firebase.auth().onAuthStateChanged(user => {
