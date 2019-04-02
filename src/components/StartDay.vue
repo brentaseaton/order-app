@@ -37,7 +37,8 @@ export default {
   data() {
     return {
       dialog: false,
-      quantities: []
+      quantities: [],
+      recipe: null
     }
   },
   props: {
@@ -59,24 +60,42 @@ export default {
         days: this.company.days
       }).then(() => {
         this.getDay()
-        this.$router.go()
+        //this.$router.go()
       }).catch(err => {
         console.log(err)
       })
     },
-    getDay(company) {     
-      db.collection('days').doc(String(company.days)).get().then(doc => {
+    getDay() {     
+      db.collection('days').doc(String(this.company.days)).get().then(doc => {
         if(doc.exists) {
           let d = doc.data()
           this.day = d
           this.day.ingredients = doc.data().ingredients
           this.day.quantities = doc.data().quantities
-          this.updateRecipeLeft()
+          this.updateOrdersLeft()
         }
       })
     },
-    updateRecipeLeft() {
-      
+    updateOrdersLeft() {
+      db.collection('recipes').get().then(snapshot => {
+        snapshot.forEach(doc => {
+          this.recipe = doc.data()
+          this.recipe.ingredients.forEach(recipeIng => {
+            console.log(recipeIng)
+            if(this.day.ingredients.indexOf(recipeIng) >= 0) {
+              this.recipe.ordersLeft = this.day.quantities[this.day.ingredients.indexOf(recipeIng)]
+              this.updateRecipe(this.recipe)
+            }
+          })
+        })
+      }) 
+    },
+    updateRecipe(r) {
+      db.collection('recipes').doc(r.slug).update({
+        ordersLeft: r.ordersLeft
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
