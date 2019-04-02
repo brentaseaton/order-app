@@ -21,9 +21,11 @@
           <v-text-field :color="`${company.mainColor}`" v-model="company.secondaryColor" label="Secondary Color (hex accepted)"></v-text-field>
         </v-flex>
       </v-layout>
+
+      <h1 class="subheading grey--text mt-4">Features</h1>
       <v-layout row wrap>
         <v-flex xs12 sm4 md3>
-          <v-checkbox :color="`${company.mainColor}`" v-model="company.dayFeature" label="Start/End Day Feature"></v-checkbox>
+          <v-checkbox :color="`${company.mainColor}`" v-model="company.dayFeature" label="Daily Limited Quantities"></v-checkbox>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
@@ -82,7 +84,8 @@ export default {
           mainColor: this.company.mainColor,
           secondaryColor: this.company.secondaryColor,
           dayFeature: this.company.dayFeature,
-          dayStarted: this.company.dayStarted
+          dayStarted: this.company.dayStarted,
+          ingredients: this.company.ingredients
         }).then(() => {
           this.snackbar = true
         }).catch(err => {

@@ -5,37 +5,48 @@
         Enter Order
       </v-btn>
       <v-layout row style="background-color: white">
-        <v-flex xs12 lg6 style="max-height: 800px; overflow: auto">
+        <v-flex xs12 lg8 style="max-height: 800px; overflow: auto">
           <h2 :class="`header-2 ${company.mainColor}--text ma-2`">Enter Order</h2>
-          <v-flex xs12 v-for="recipe in recipes" :key="recipe.slug">
-            <v-card class="my-4 mx-3" :color="`${company.mainColor} white--text`">
-              <v-card-title>
-                <h2>{{ recipe.title }}</h2>
-                <v-spacer></v-spacer>
-                ${{ recipe.price }}
-              </v-card-title>
-              <v-list>
-                <v-chip outline :color="`${company.secondaryColor}`" v-for="(ing, index) in recipe.ingredients" :key="index" class="my-2">{{ ing }}</v-chip>
-              </v-list>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn icon class="white--text mx-4" @click="decreaseQty(recipe)">
-                  <v-icon>remove</v-icon>
-                </v-btn>
-                {{ recipe.quantity }}
-                <v-btn icon class="white--text ml-4" @click="increaseQty(recipe)">
-                  <v-icon>add</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
+          <v-layout row wrap style="background-color: white">
+            <v-flex xs12 md4 v-for="recipe in recipes" :key="recipe.slug">
+              <v-card class="my-2 mx-3" :color="`${company.mainColor} white--text`">
+                <v-card-title @click="increaseQty(recipe)">
+                  <h3>{{ recipe.title }}</h3>
+                  <v-spacer></v-spacer>
+                  ${{ recipe.price }}
+                </v-card-title>
+                <v-list v-if="recipe.ingToggle">
+                  <v-chip outline :color="`${company.secondaryColor}`" v-for="(ing, index) in recipe.ingredients" :key="index" class="my-2">{{ ing }}</v-chip>
+                </v-list>
+                <v-card-actions>
+                  <v-btn small dark flat icon @click="toggleIng(recipe)" v-if="!recipe.ingToggle">
+                    <v-icon>expand_more</v-icon>
+                  </v-btn>
+                  <v-btn small dark flat icon @click="toggleIng(recipe)" v-if="recipe.ingToggle">
+                    <v-icon>expand_less</v-icon>
+                  </v-btn>
+                </v-card-actions>
+                <!-- <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn icon class="white--text mx-4" @click="decreaseQty(recipe)">
+                    <v-icon>remove</v-icon>
+                  </v-btn>
+                  {{ recipe.quantity }}
+                  <v-btn icon class="white--text ml-4" @click="increaseQty(recipe)">
+                    <v-icon>add</v-icon>
+                  </v-btn>
+                </v-card-actions> -->
+              </v-card>
+            </v-flex>
+          </v-layout>
         </v-flex>
-        <v-flex xs12 lg4>
+        <v-flex xs12 md6 lg4>
           <h2 :class="`title ${company.mainColor}--text ma-2`">Order Summary</h2>        
           <p class="red--text center">{{ feedback }}</p>
           <v-btn dark :color="`${company.secondaryColor}`" @click="createOrder(orderRecipes, notes)" :loading="loading">Submit Order</v-btn>
+          <!-- <v-btn dark :color="`${company.secondaryColor}`" @click="createOrder(orderRecipes, notes)" :loading="loading">Reset Order</v-btn> -->
           <v-list style="background-color: transparent">
-            <v-list-tile v-for="(r, index) in orderRecipes" :key="index">
+            <v-list-tile v-for="(r, index) in orderRecipes" :key="index" @click="decreaseQty(r)">
               <v-list-tile-title class="subheading grey--text">{{ r.title }} <span class="mx-4">x{{ r.quantity }}</span></v-list-tile-title>
             </v-list-tile>
           </v-list>
@@ -67,7 +78,8 @@ export default {
       loading: false,
       notes: null,
       total: 0,
-      company: null
+      company: null,
+      day: null
     }
   },
   methods: {
@@ -76,7 +88,11 @@ export default {
         r.quantity--
         this.total = this.total - r.price
         if(r.quantity <= 0) {
-          this.orderRecipes.splice(r.index, 1)
+          for(var i = 0; i < this.orderRecipes.length; i++) {
+            if(this.orderRecipes[i].title == r.title) {
+              this.orderRecipes.splice(i, 1)
+            }
+          }
         }
       }
     },
@@ -86,6 +102,9 @@ export default {
       if(!this.orderRecipes.includes(r)) {
         this.orderRecipes.push(r)
       }
+    },
+    toggleIng(r) {  
+      r.ingToggle = !r.ingToggle  
     },
     createOrder(r, n) {
       let TodayDate = new Date()
@@ -101,6 +120,7 @@ export default {
           timestamp: Date.now(),
           day: TodayDate.getDay()
         }).then(() => {
+          this.updateQuantities()
           this.increaseOrderNumber()
           this.orderRecipes = []
           this.loading = false
@@ -127,7 +147,6 @@ export default {
       
       this.recipes.forEach(recipe => {
         recipe.quantity = 0
-        console.log(recipe.quantity)
       })
 
       db.collection('companies').doc(this.company.id).update({
@@ -146,6 +165,42 @@ export default {
       }).catch(err => {
         console.log(err.message)
       })
+    },
+    updateQuantities() {
+      if(this.company.dayFeature == true && this.company.dayStarted == true) {
+
+        this.orderRecipes.forEach(recipe => {
+          console.log(recipe.ingredients)
+          recipe.ingredients.forEach(recipeIng => {
+            if(this.day.ingredients.indexOf(recipeIng) >= 0) {
+              this.day.quantities[this.day.ingredients.indexOf(recipeIng)] -= (1 * recipe.quantity)
+              this.updateOrdersLeft(recipeIng, this.day.quantities[this.day.ingredients.indexOf(recipeIng)])
+            }
+          })
+        })
+
+        db.collection('days').doc(String(this.company.days)).update({
+          quantities: this.day.quantities
+        }).then(() => {
+          this.day.quantities = []
+          this.day.ingredients = []
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+    },
+    getDay(company) {     
+      db.collection('days').doc(String(company.days)).get().then(doc => {
+        if(doc.exists) {
+          let d = doc.data()
+          this.day = d
+          this.day.ingredients = doc.data().ingredients
+          this.day.quantities = doc.data().quantities
+        }
+      })
+    },
+    updateOrdersLeft(ingredient, qty) {
+      
     }
   },
   created() {
@@ -172,6 +227,7 @@ export default {
         this.company.mainColor = doc.data().mainColor
         this.company.name = doc.data().name
         this.company.secondaryColor = doc.data().secondaryColor
+        this.getDay(this.company)
       })
     })
 

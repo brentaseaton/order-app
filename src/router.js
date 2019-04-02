@@ -6,7 +6,7 @@ import Recipes from './views/Recipes'
 import AddRecipe from './views/AddRecipe'
 import EditRecipe from './views/EditRecipe'
 import Orders from './views/Orders'
-import Stats from './views/Stats'
+import Data from './views/Data'
 import Settings from './views/Settings'
 
 Vue.use(Router)
@@ -46,9 +46,9 @@ export default new Router({
       component: Orders
     },
     {
-      path: '/stats',
-      name: 'Stats',
-      component: Stats
+      path: '/data',
+      name: 'Data',
+      component: Data
     },
     {
       path: '/settings',
