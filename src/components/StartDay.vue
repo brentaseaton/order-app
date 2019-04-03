@@ -60,7 +60,7 @@ export default {
         days: this.company.days
       }).then(() => {
         this.getDay()
-        //this.$router.go()
+        this.$router.go()
       }).catch(err => {
         console.log(err)
       })
@@ -81,7 +81,6 @@ export default {
         snapshot.forEach(doc => {
           this.recipe = doc.data()
           this.recipe.ingredients.forEach(recipeIng => {
-            console.log(recipeIng)
             if(this.day.ingredients.indexOf(recipeIng) >= 0) {
               this.recipe.ordersLeft = this.day.quantities[this.day.ingredients.indexOf(recipeIng)]
               this.updateRecipe(this.recipe)

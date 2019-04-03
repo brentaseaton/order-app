@@ -25,6 +25,8 @@
                   <v-btn small dark flat icon @click="toggleIng(recipe)" v-if="recipe.ingToggle">
                     <v-icon>expand_less</v-icon>
                   </v-btn>
+                  <v-spacer></v-spacer>
+                  <p v-if="recipe.ordersLeft < 11">{{ recipe.ordersLeft }} left!</p>
                 </v-card-actions>
                 <!-- <v-card-actions>
                   <v-spacer></v-spacer>
@@ -181,9 +183,6 @@ export default {
 
         db.collection('days').doc(String(this.company.days)).update({
           quantities: this.day.quantities
-        }).then(() => {
-          this.day.quantities = []
-          this.day.ingredients = []
         }).catch(err => {
           console.log(err)
         })
@@ -200,7 +199,24 @@ export default {
       })
     },
     updateOrdersLeft(ingredient, qty) {
-      
+      db.collection('recipes').get().then(snapshot => {
+        snapshot.forEach(doc => {
+          let recipe = doc.data()
+          recipe.ingredients.forEach(recipeIng => {
+            if(recipeIng == ingredient) {
+              recipe.ordersLeft = qty
+              this.updateRecipe(recipe)
+            }
+          })
+        })
+      })
+    },
+    updateRecipe(r) {
+      db.collection('recipes').doc(r.slug).update({
+        ordersLeft: r.ordersLeft
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   created() {
