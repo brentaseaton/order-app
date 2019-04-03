@@ -103,15 +103,17 @@ export default {
       }
     },
     increaseQty(r) {
-      r.quantity++
-      this.total = this.total + r.price
-      if(!this.orderRecipes.includes(r)) {
-        this.orderRecipes.push(r)
-      }
+      if(r.ordersLeft > 0) {
+        r.quantity++
+        this.total = this.total + r.price
+        if(!this.orderRecipes.includes(r)) {
+          this.orderRecipes.push(r)
+        }
 
-      this.recipes.forEach(recipe => {
-        recipe.ordersLeft -= 1
-      })
+        this.recipes.forEach(recipe => {
+          recipe.ordersLeft -= 1
+        })
+      }
     },
     toggleIng(r) {  
       r.ingToggle = !r.ingToggle  
@@ -234,12 +236,53 @@ export default {
       }
     })   
     
-    db.collection('recipes').get().then(snapshot => {
+    /* db.collection('recipes').get().then(snapshot => {
       snapshot.forEach(doc => {
         let recipe = doc.data()
         this.recipes.push(recipe)
       })
-    }) 
+    })  */
+
+    let ref3 = db.collection('recipes')
+
+    ref3.onSnapshot(snapshot => {
+      snapshot.docChanges().forEach(change => {
+        let doc = change.doc
+        if(change.type == 'added') {
+          this.recipes.push({
+            id: doc.id,
+            cost: doc.data().cost,
+            ingToggle: doc.data().ingToggle,
+            ingredients: doc.data().ingredients,
+            ordersLeft: doc.data().ordersLeft,
+            price: doc.data().price,
+            quantity: doc.data().quantity,
+            slug: doc.data().slug,
+            title: doc.data().title
+          })
+        } else if(change.type == 'modified') {
+          this.recipes.forEach(recipe => {
+            if(recipe.id == doc.id) {
+              this.recipes = this.recipes.filter(o => {
+                return o.id != recipe.id
+              })
+            }
+          })
+
+          this.recipes.push({
+            id: doc.id,
+            cost: doc.data().cost,
+            ingToggle: doc.data().ingToggle,
+            ingredients: doc.data().ingredients,
+            ordersLeft: doc.data().ordersLeft,
+            price: doc.data().price,
+            quantity: doc.data().quantity,
+            slug: doc.data().slug,
+            title: doc.data().title
+          })
+        }
+      })
+    })
 
     db.collection('companies').get()
     .then(snapshot => {
