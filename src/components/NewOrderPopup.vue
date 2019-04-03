@@ -88,7 +88,11 @@ export default {
     decreaseQty(r) {
       if(r.quantity > 0) {
         r.quantity--
-        this.total = this.total - r.price
+        this.total = this.total - r.price        
+
+        this.recipes.forEach(recipe => {
+          recipe.ordersLeft += 1
+        })
         if(r.quantity <= 0) {
           for(var i = 0; i < this.orderRecipes.length; i++) {
             if(this.orderRecipes[i].title == r.title) {
@@ -104,6 +108,10 @@ export default {
       if(!this.orderRecipes.includes(r)) {
         this.orderRecipes.push(r)
       }
+
+      this.recipes.forEach(recipe => {
+        recipe.ordersLeft -= 1
+      })
     },
     toggleIng(r) {  
       r.ingToggle = !r.ingToggle  

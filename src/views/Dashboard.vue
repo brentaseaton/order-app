@@ -4,6 +4,7 @@
 
     <StartDay :company="company" />
     <EndDay :company="company" :orders="orders" />
+    <Adjustments :company="company" />
 
     <v-container fluid class="my-2">
       <v-layout row wrap>
@@ -53,13 +54,15 @@ import ReadyOrders from '@/components/ReadyOrders'
 import moment from 'moment'
 import EndDay from '@/components/EndDay'
 import StartDay from '@/components/StartDay'
+import Adjustments from '@/components/Adjustments'
 
 export default {
   name: 'Dashboard',
   components: {
     ReadyOrders,
     EndDay,
-    StartDay
+    StartDay,
+    Adjustments
   },
   data() {
     return {

@@ -32,10 +32,10 @@
     <v-navigation-drawer v-model="drawer" app :style="`background-color: ${company.mainColor}`">
       <v-layout column align-center>
         <v-flex class="mt-5">
-          <v-avatar size="100" class="pr-1">
-            <img src="/avatar-2.png">
+          <v-avatar size="120">
+            <img src="/logo.jpg">
           </v-avatar>
-          <p class="white--text subheading mt-2">
+          <p class="white--text subheading mt-3">
             {{ company.name }}
           </p>
         </v-flex>
